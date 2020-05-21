@@ -22,12 +22,6 @@ private:
 
   Holonomic m_base;
 
-  Arm m_tray;
-  Arm m_slider;
-
-  Intake m_leftIntake;
-  Intake m_rightIntake;
-
   RobotMode m_robotMode;
   std::string m_robotModeString = "Disabled";
 

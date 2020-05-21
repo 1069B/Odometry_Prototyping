@@ -5,10 +5,10 @@
 
 Holonomic::Holonomic(Robot &p_robot, const int p_maximumVelocity):
 Base(p_robot, p_maximumVelocity),
-m_frontLeftMotor(*Motor::findMotor("FrontLeftMotor", 1, pros::E_MOTOR_GEARSET_18, false)),
-m_frontRightMotor(*Motor::findMotor("FrontRightMotor", 2, pros::E_MOTOR_GEARSET_18, true)),
-m_backLeftMotor(*Motor::findMotor("BackLeftMotor", 19, pros::E_MOTOR_GEARSET_18, false)),
-m_backRightMotor(*Motor::findMotor("BackRightMotor", 20, pros::E_MOTOR_GEARSET_18, true))
+m_frontLeftMotor(*Motor::findMotor("FrontLeftMotor", 20, pros::E_MOTOR_GEARSET_18, false)),
+m_frontRightMotor(*Motor::findMotor("FrontRightMotor", 11, pros::E_MOTOR_GEARSET_18, true)),
+m_backLeftMotor(*Motor::findMotor("BackLeftMotor", 10, pros::E_MOTOR_GEARSET_18, false)),
+m_backRightMotor(*Motor::findMotor("BackRightMotor", 1, pros::E_MOTOR_GEARSET_18, true))
 {
 
 }

@@ -21,15 +21,6 @@ int Robot::defineGUI(){
   m_gui.addScreen("Subsystems");
   m_gui.addButton("Subsystems", "Odometry", 20, 40, 150, 30);
   m_gui.addButtonScreenChange("Subsystems", "Odometry", "Odometry");
-  m_gui.addButton("Subsystems", "Tray", 20, 80, 150, 30);
-  m_gui.addButtonScreenChange("Subsystems", "Tray", "Tray");
-  m_gui.addButton("Subsystems", "Slider", 20, 120, 150, 30);
-  m_gui.addButtonScreenChange("Subsystems", "Slider", "Slider");
-
-  m_gui.addButton("Subsystems", "Left Intake", 180, 40, 150, 30);
-  m_gui.addButtonScreenChange("Subsystems", "Left Intake", "Left_Intake");
-  m_gui.addButton("Subsystems", "Right Intake", 180, 80, 150, 30);
-  m_gui.addButtonScreenChange("Subsystems", "Right Intake", "Right_Intake");
   m_gui.addButton("Subsystems", "Base", 180, 80, 150, 30);
   m_gui.addButtonScreenChange("Subsystems", "Base", "Holonomic");
 

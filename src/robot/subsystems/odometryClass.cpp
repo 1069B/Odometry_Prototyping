@@ -21,7 +21,7 @@ m_robot(p_robot), m_translationDebug("Translation_Debugging.csv", true), m_Orien
 
   m_robot.getTaskScheduler().addTask("Odometry", std::bind(&Odometry::task, this), 10, TASK_ALWAYS);
 
-  m_translationDebug.addLine("Time, Velocity X, X Lap Time, Velocity Y, Y Lap Time");
+  //m_translationDebug.addLine("Time, Velocity X, X Lap Time, Velocity Y, Y Lap Time");
   m_OrientationDebug.addLine("Time, Time Change, Velocity Left, Velocity Right, Radius Left, Raduis Right, Distance Left, Distance Right, Orientation Velocity, Orientation");
 }
 
@@ -234,13 +234,13 @@ int Odometry::calculateOrientation(){
         m_turnType = "Error";
   }
 
-  if(m_timer.getTime() > 5000){
-    m_orientation += m_orientationVelocity * m_timeChange;
+  if(m_timer.getTime() > 2000){
+    m_orientation += m_orientationVelocity;
   }
 
-  if(m_timer.getTime() > 5000){
+  if(m_timer.getTime() > 2000){
     //"Time, Velocity Left, Velocity Right, Radius Left, Raduis Right, Distance Left, Distance Right, Orientation");
-    //m_OrientationDebug.addLine(std::to_string(pros::millis())+", "+std::to_string(m_timeChange)+", "+std::to_string(m_velocityLeft)+", "+std::to_string(m_velocityRight)+", "+std::to_string(m_radiusLeft)+", "+std::to_string(m_radiusRight)+", "+std::to_string(m_velocityLeft*m_timeChange)+", "+std::to_string(m_velocityRight*m_timeChange)+", "+std::to_string(m_orientationVelocity)+", "+ std::to_string(m_orientation));
+    m_OrientationDebug.addLine(std::to_string(pros::millis())+", "+std::to_string(m_timeChange)+", "+std::to_string(m_velocityLeft)+", "+std::to_string(m_velocityRight)+", "+std::to_string(m_radiusLeft)+", "+std::to_string(m_radiusRight)+", "+std::to_string(m_velocityLeft*m_timeChange)+", "+std::to_string(m_velocityRight*m_timeChange)+", "+std::to_string(m_orientationVelocity)+", "+ std::to_string(m_orientation));
   }
   return 0;
 }
