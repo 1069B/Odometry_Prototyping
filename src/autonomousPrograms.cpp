@@ -12,6 +12,13 @@ int Robot::baseTo(double speed, double orientation, double turning, int duration
 }
 
 int Robot::autoDefault(){
+  m_base.goToVector(0,0,150);
+  m_timer.addActionDelay(4075);
+  while(!m_timer.preformAction()){
+    robot.task();
+    pros::delay(3);
+  }
+  m_base.goToVector(0,0,0);
   return 0;
 }
 

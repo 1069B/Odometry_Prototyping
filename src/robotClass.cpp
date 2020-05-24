@@ -4,7 +4,7 @@
 #include "robot/subsystems/baseComponents/holonomicClass.hpp"
 
 Robot::Robot():
-  m_gui("Home"),
+  m_gui("Odometry"),
   m_mainController(pros::E_CONTROLLER_MASTER),
   m_partnerController(pros::E_CONTROLLER_PARTNER),
   m_timer(),

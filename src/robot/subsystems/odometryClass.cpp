@@ -1,9 +1,10 @@
 #include "robot/subsystems/odometryClass.hpp"
 #include "robot/devices/encoderClass.hpp"
+#include "robot/graphical/components/alertClass.hpp"
 #include "robotClass.hpp"
 
 Odometry::Odometry(Robot& p_robot, const std::string p_leftEncoder, const std::string p_rightEncoder, const std::string p_centerEncoder):
-m_robot(p_robot), m_translationDebug("Translation_Debugging.csv", true), m_OrientationDebug("Orientation_Debugging.csv", true){
+m_robot(p_robot){//m_translationDebug("Translation_Debugging.csv", true), m_OrientationDebug("Orientation_Debugging.csv", true)
   if(Encoder::findEncoder(p_leftEncoder) == NULL)
     m_leftEncoder = new Encoder(m_robot, p_leftEncoder, 1, false);
   else
@@ -22,73 +23,47 @@ m_robot(p_robot), m_translationDebug("Translation_Debugging.csv", true), m_Orien
   m_robot.getTaskScheduler().addTask("Odometry", std::bind(&Odometry::task, this), 10, TASK_ALWAYS);
 
   //m_translationDebug.addLine("Time, Velocity X, X Lap Time, Velocity Y, Y Lap Time");
-  m_OrientationDebug.addLine("Time, Time Change, Velocity Left, Velocity Right, Radius Left, Raduis Right, Distance Left, Distance Right, Orientation Velocity, Orientation");
+  //m_OrientationDebug.addLine("Time, Time Change, Velocity Left, Velocity Right, Radius Left, Raduis Right, Distance Left, Distance Right, Left Orientation Velocity, Right Orientation Velocity, Average Orientation Velocity, Orientation");
 }
 
 double Odometry::getRadiusLeft(const double p_leftVelocity, const double p_rightVelocity){
-  if(p_leftVelocity == p_rightVelocity){//No Turn
-   //m_turnType = NOTURN;
+  if(p_leftVelocity == 0 || (int)p_leftVelocity == (int)p_rightVelocity){
    m_radiusLeft = 0;
    return m_radiusLeft;
  }
- else if(p_leftVelocity == 0){// Arc Turn
-   //m_turnType = ARC;
-   m_radiusLeft = 0;
+ else if(p_rightVelocity == 0){
+   m_radiusLeft = m_trakingDistanceTotal;
    return m_radiusLeft;
  }
- else if(p_rightVelocity == 0){//Arc Turn
-   //m_turnType = ARC;
-   m_radiusLeft = -m_trakingDistanceTotal/(-1);
-   return m_radiusLeft;
- }
- else if(p_leftVelocity/fabs(p_leftVelocity) != p_rightVelocity/fabs(p_rightVelocity)){//Opposed Turn
-   //m_turnType = OPPOSED;
-   m_radiusLeft = -m_trakingDistanceTotal/(p_rightVelocity/p_leftVelocity-1);
-   return m_radiusLeft;
- }
- else{//Arc Turn
-   //m_turnType = ARC;
-   m_radiusLeft = -m_trakingDistanceTotal/(p_rightVelocity/p_leftVelocity-1);
+ else{
+   m_radiusLeft = fabs(m_trakingDistanceTotal/(p_rightVelocity/p_leftVelocity-1));
    return m_radiusLeft;
  }
  return 404;
 }
 
 double Odometry::getRadiusRight(const double p_leftVelocity, const double p_rightVelocity){
-  if(p_leftVelocity == p_rightVelocity){//No Turn
-    //m_turnType = NOTURN;
+  if(p_rightVelocity == 0 || (int)p_leftVelocity == (int)p_rightVelocity){
     m_radiusRight = 0;
     return m_radiusRight;
   }
-  else if(p_leftVelocity == 0){//Arc Turn
-    //m_turnType = ARC;
-    m_radiusRight = m_trakingDistanceTotal/(-1);
+  else if(p_leftVelocity == 0){
+    m_radiusRight = m_trakingDistanceTotal;
     return m_radiusRight;
   }
-  else if(p_rightVelocity == 0){//Arc Turn
-    //m_turnType = ARC;
-    m_radiusRight = 0;
-    return m_radiusRight;
-  }
-  else if(p_leftVelocity/fabs(p_leftVelocity) != p_rightVelocity/fabs(p_rightVelocity)){//Opposed Turning
-    //m_turnType = OPPOSED;
-    m_radiusRight = m_trakingDistanceTotal/(p_leftVelocity/p_rightVelocity-1);
-    return m_radiusRight;
-  }
-  else{//Arc
-    //m_turnType = ARC;
-      m_radiusRight = m_trakingDistanceTotal/(p_leftVelocity/p_rightVelocity-1);
+  else{
+    m_radiusRight = fabs(m_trakingDistanceTotal/(p_leftVelocity/p_rightVelocity-1));
     return m_radiusRight;
   }
   return 404;
 }
 
 double Odometry::getOrientation(){
-  return m_orientation;
+  return m_absoluteOrientation;
 }
 
 double Odometry::setOrientation(const double p_orientation){
-  m_orientation = p_orientation;
+  m_absoluteOrientation = p_orientation;
   return 0;
 }
 
@@ -151,7 +126,7 @@ int Odometry::calculatePosition(){
   double l_relativeXVelocity = (m_leftEncoder->getVelocity() + m_rightEncoder->getVelocity())/2.0;
   double l_relativeYVelocity = m_centerEncoder->getVelocity();
   /*Calculating the Movement Vector*/
-  double l_relativeRobotAngle = m_orientation;
+  double l_relativeRobotAngle = m_absoluteOrientation;
 
   double l_relativeMovementVelocity = sqrt(pow(l_relativeXVelocity,2) + pow(l_relativeYVelocity,2));
 
@@ -184,7 +159,7 @@ int Odometry::calculatePosition(){
   m_yVelocity = sin((l_totalAngle*M_PI)/180) * l_relativeMovementVelocity;
 
   if(m_timer.getTime() > 5000){
-    m_translationDebug.addLine(std::to_string(m_timer.getTime()) + ", " + std::to_string(m_xVelocity) + ", " + std::to_string((m_timer.lapTime(5)/1000.0)) + ", " + std::to_string(m_yVelocity) + ", " + std::to_string((m_timer.lapTime(6)/1000.0)));
+    //m_translationDebug.addLine(std::to_string(m_timer.getTime()) + ", " + std::to_string(m_xVelocity) + ", " + std::to_string((m_timer.lapTime(5)/1000.0)) + ", " + std::to_string(m_yVelocity) + ", " + std::to_string((m_timer.lapTime(6)/1000.0)));
     m_xPosition += m_xVelocity * ((double)m_timer.lapTime(1)/1000.0);
     m_yPosition += m_yVelocity * ((double)m_timer.lapTime(2)/1000.0);
   }
@@ -194,10 +169,8 @@ int Odometry::calculatePosition(){
 int Odometry::calculateOrientation(){
     m_velocityLeft = m_leftEncoder->getVelocity();
     m_velocityRight = m_rightEncoder->getVelocity();
-    m_radiusAvg = ((getRadiusLeft(m_velocityLeft,m_velocityRight)+m_trackingDistanceLeft)+ (getRadiusRight(m_velocityLeft,m_velocityRight)-m_trackingDistanceRight))/2;
-    m_radiusLeft = m_radiusAvg - m_trackingDistanceLeft;
-    m_radiusRight = m_radiusAvg + m_trackingDistanceRight;
-    m_velocityAvg = (m_velocityLeft+m_velocityRight)/2;
+    m_radiusLeft = getRadiusLeft(m_velocityLeft, m_velocityRight);
+    m_radiusRight = getRadiusRight(m_velocityLeft, m_velocityRight);
 
     m_timeChange = m_timer.lapTime(3)/1000.0;
 
@@ -206,42 +179,58 @@ int Odometry::calculateOrientation(){
     if(fabs(m_radiusRight) < 0.0001)
         m_radiusRight = 0;
 
-    if(m_velocityLeft == m_velocityRight){
+    if((int)m_velocityLeft == (int)m_velocityRight){
+      m_leftOrientationVelocity = 0;
+      m_rightOrientationVelocity = 0;
       m_orientationVelocity = 0;
       m_radiusLeft = 0;
       m_radiusRight = 0;
       m_turnType = "Not Turning";
     }
-    else if(m_radiusAvg == 0 || m_velocityAvg == 0){// Point and Extreme Opposed
-      m_orientationVelocity = ((180)*(fabs(m_velocityLeft)+fabs(m_velocityRight))*(m_timeChange))/((M_PI)*(fabs(m_radiusLeft)+fabs(m_radiusRight)));
-      m_orientationVelocity *= (m_velocityLeft/fabs(m_velocityLeft));
-      m_turnType = "Extreme Opposed";
-    }
-    else if(m_velocityLeft == 0 || m_velocityRight == 0){//Extreme Arc Turn Right
-      m_orientationVelocity = (m_velocityAvg*m_timeChange*360)/(2*M_PI*m_radiusAvg);
-      m_turnType = "Extreme Arc";
-    }
-    else if(m_velocityLeft/fabs(m_velocityLeft) == m_velocityRight/fabs(m_velocityRight)){// Arc
-      m_orientationVelocity = (m_velocityAvg*m_timeChange*360)/(2*M_PI*m_radiusAvg);
-      m_turnType = "Arc";
-    }
-    else if(m_velocityLeft/fabs(m_velocityLeft) != m_velocityRight/fabs(m_velocityRight)){// Opposed
-      m_orientationVelocity = (m_velocityAvg*m_timeChange*360)/(2*M_PI*m_radiusAvg);
-      m_turnType = "Opposed";
-    }
     else{
-        m_orientationVelocity = 404;
-        m_turnType = "Error";
-  }
+      /*Calculates the Left Orientation Change*/
+      if((int)m_velocityLeft != 0 || (int)m_radiusLeft != 0)
+        m_leftOrientationVelocity = fabs((180*m_velocityLeft*m_timeChange)/(M_PI*m_radiusLeft));
+      else
+        m_leftOrientationVelocity = 0;
 
-  if(m_timer.getTime() > 2000){
-    m_orientation += m_orientationVelocity;
-  }
 
-  if(m_timer.getTime() > 2000){
+      /*Calculates the Right Orientation Change*/
+      if((int)m_velocityRight != 0 || (int)m_radiusRight != 0)
+        m_rightOrientationVelocity = fabs((180*m_velocityRight*m_timeChange)/(M_PI*m_radiusRight));
+      else
+        m_rightOrientationVelocity = 0;
+
+
+      if(fabs(m_velocityLeft) > fabs(m_velocityRight)){
+        m_leftOrientationVelocity *= -calculateDirection(m_velocityLeft);
+        m_rightOrientationVelocity *= -calculateDirection(m_velocityLeft);
+      }
+      else if(fabs(m_velocityLeft) < fabs(m_velocityRight)){
+        m_leftOrientationVelocity *= calculateDirection(m_velocityRight);
+        m_rightOrientationVelocity *= calculateDirection(m_velocityRight);
+      }
+      else{
+        m_leftOrientationVelocity *= -calculateDirection(m_velocityLeft);
+        m_rightOrientationVelocity *= calculateDirection(m_velocityRight);
+      }
+    }
+
+    if(m_leftOrientationVelocity != 0 && m_rightOrientationVelocity != 0)
+      m_orientationVelocity = (m_leftOrientationVelocity+m_rightOrientationVelocity)/2.0;
+    else if(m_leftOrientationVelocity == 0 && m_rightOrientationVelocity != 0)
+      m_orientationVelocity = m_rightOrientationVelocity;
+    else if(m_leftOrientationVelocity != 0 && m_rightOrientationVelocity == 0)
+      m_orientationVelocity = m_leftOrientationVelocity;
+    else
+      m_orientationVelocity = 0;
+
+    m_absoluteOrientation += m_orientationVelocity;
+    m_relativeOrientation = orientationConverter(m_absoluteOrientation);
+
     //"Time, Velocity Left, Velocity Right, Radius Left, Raduis Right, Distance Left, Distance Right, Orientation");
-    m_OrientationDebug.addLine(std::to_string(pros::millis())+", "+std::to_string(m_timeChange)+", "+std::to_string(m_velocityLeft)+", "+std::to_string(m_velocityRight)+", "+std::to_string(m_radiusLeft)+", "+std::to_string(m_radiusRight)+", "+std::to_string(m_velocityLeft*m_timeChange)+", "+std::to_string(m_velocityRight*m_timeChange)+", "+std::to_string(m_orientationVelocity)+", "+ std::to_string(m_orientation));
-  }
+    // m_OrientationDebug.addLine(std::to_string(pros::millis())+", "+std::to_string(m_timeChange)+", "+std::to_string(m_velocityLeft)+", "+std::to_string(m_velocityRight)+", "+std::to_string(m_radiusLeft)+", "+std::to_string(m_radiusRight)+", "+std::to_string(m_velocityLeft*m_timeChange)+", "+std::to_string(m_velocityRight*m_timeChange)+", "+std::to_string(m_leftOrientationVelocity) + ", "+std::to_string(m_rightOrientationVelocity) +
+    // ", "+std::to_string(m_orientationVelocity)+", "+ std::to_string(m_absoluteOrientation));
   return 0;
 }
 
@@ -262,12 +251,11 @@ int Odometry::defineGUI(const std::string p_returnScreen){
   l_gui.addLabel(m_name, 200, 10, redText, m_name);
   l_gui.addRectangle(m_name, 0, 0, 480, 40, whiteText);
 
-  l_gui.addLabel(m_name, 20, 50, whiteText, "Orientation: %f Deg", &m_orientation);
-  l_gui.addLabel(m_name, 20, 75, whiteText, "Orientation Velocity: %d", (std::function<int()>)std::bind(&Odometry::getOrientationVelocity, this));
-  l_gui.addLabel(m_name, 20, 100, whiteText, "Current XPosition: %f", &m_xPosition);
-  l_gui.addLabel(m_name, 20, 125, whiteText, "Velocity of XPosition: %f", &m_xVelocity);
-  l_gui.addLabel(m_name, 20, 150, whiteText, "Current YPosition: %f", &m_yPosition);
-  l_gui.addLabel(m_name, 20, 175, whiteText, "Velocity of YPosition: %f", &m_yVelocity);
+  l_gui.addLabel(m_name, 20, 50, whiteText, "Absolute Angle: %f Deg", &m_absoluteOrientation);
+  l_gui.addLabel(m_name, 20, 80, whiteText, "Relative Angle: %f", &m_relativeOrientation);
+  // l_gui.addLabel(m_name, 20, 125, whiteText, "Velocity of XPosition: %f", &m_xVelocity);
+  // l_gui.addLabel(m_name, 20, 150, whiteText, "Current YPosition: %f", &m_yPosition);
+  // l_gui.addLabel(m_name, 20, 175, whiteText, "Velocity of YPosition: %f", &m_yVelocity);
 
   // l_gui.addLabel(m_name, 20, 75, whiteText, "Left Velocity: %d", (std::function<int()>)std::bind(&Encoder::getVelocity, m_leftEncoder));
   // l_gui.addLabel(m_name, 20, 100, whiteText, "Right Velocity: %d", (std::function<int()>)std::bind(&Encoder::getVelocity, m_rightEncoder));

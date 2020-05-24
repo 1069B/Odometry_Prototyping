@@ -1,6 +1,7 @@
 #include "robot/devices/encoderClass.hpp"
 #include "robot/devices/externalFileClass.hpp"
 #include "robotClass.hpp"
+#include "robot/graphical/components/alertClass.hpp"
 
 
 ExternalFile Encoder::s_config("Encoder_Config.txt");
@@ -103,8 +104,10 @@ int Encoder::task(){
   m_displacement = ((double)m_rotation / 360.00) * m_wheelCircumference;
 
   m_velocity = (m_displacement - m_previousDisplacement) / (l_timerChange / 1000.00);
+  if(pros::millis() < 250){
+    m_velocity = 0;
+  }
   m_previousDisplacement = m_displacement;
-
   m_calculatedDisplacement += m_velocity * l_timerChange / 1000.00;
 
   return 0;
