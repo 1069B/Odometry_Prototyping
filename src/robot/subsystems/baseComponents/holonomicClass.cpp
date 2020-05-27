@@ -140,18 +140,41 @@ int Holonomic::task(){
   return 0;
 }
 
+int Holonomic::setBrakeMode(pros::motor_brake_mode_e_t p_brakeMode){
+  m_backLeftMotor.setBrake(p_brakeMode);
+  m_frontLeftMotor.setBrake(p_brakeMode);
+  m_frontRightMotor.setBrake(p_brakeMode);
+  m_backRightMotor.setBrake(p_brakeMode);
+  return 0;
+}
+
 int Holonomic::defineGUI(const std::string p_returnScreen){
   auto &l_gui = m_robot.getGUI();
-  //m_armMotor->defineGUI(m_robot.getGUI(), m_name);
+  m_frontLeftMotor.defineGUI(l_gui, "Holonomic");
+  m_frontRightMotor.defineGUI(l_gui, "Holonomic");
+  m_backLeftMotor.defineGUI(l_gui, "Holonomic");
+  m_backRightMotor.defineGUI(l_gui, "Holonomic");
 
   l_gui.addScreen("Holonomic");
   l_gui.addLabel("Holonomic", 200, 10, redText, m_name);
   l_gui.addRectangle("Holonomic", 0, 0, 480, 40, whiteText);
 
-  l_gui.addLabel("Holonomic", 20, 50, whiteText, "Front Left Velocity: %d RPM\t", &m_desiredFrontLeftVelocity);
-  l_gui.addLabel("Holonomic", 20, 80, whiteText, "Front Left Velocity: %d RPM\t", &m_desiredFrontRightVelocity);
-  l_gui.addLabel("Holonomic", 20, 110, whiteText, "Front Left Velocity: %d RPM\t", &m_desiredBackLeftVelocity);
-  l_gui.addLabel("Holonomic", 20, 140, whiteText, "Front Left Velocity: %d RPM\t", &m_desiredBackRightVelocity);
+  l_gui.addButton("Holonomic", m_frontLeftMotor.getName(), 75, 50, 150, 30);
+  l_gui.addButtonScreenChange("Holonomic", m_frontLeftMotor.getName(), m_frontLeftMotor.getName());
+
+  l_gui.addButton("Holonomic", m_frontRightMotor.getName(), 75, 90, 150, 30);
+  l_gui.addButtonScreenChange("Holonomic", m_frontRightMotor.getName(), m_frontRightMotor.getName());
+
+  l_gui.addButton("Holonomic", m_backLeftMotor.getName(), 250, 50, 150, 30);
+  l_gui.addButtonScreenChange("Holonomic", m_backLeftMotor.getName(), m_backLeftMotor.getName());
+
+  l_gui.addButton("Holonomic", m_backRightMotor.getName(), 250, 90, 150, 30);
+  l_gui.addButtonScreenChange("Holonomic", m_backRightMotor.getName(), m_backRightMotor.getName());
+
+  // l_gui.addLabel("Holonomic", 20, 50, whiteText, "Front Left Pos: %d RPM\t", &m_desiredFrontLeftVelocity);
+  // l_gui.addLabel("Holonomic", 20, 80, whiteText, "Front Left Pos: %d RPM\t", &m_desiredFrontRightVelocity);
+  // l_gui.addLabel("Holonomic", 20, 110, whiteText, "Front Left Pos: %d RPM\t", &m_desiredBackLeftVelocity);
+  // l_gui.addLabel("Holonomic", 20, 140, whiteText, "Front Left Pos: %d RPM\t", &m_desiredBackRightVelocity);
 
   // l_gui.addButton("Holonomic", m_name+" Motor", 250, 150, 150, 30);
   // l_gui.addButtonScreenChange("Holonomic", m_name+" Motor", m_armMotor->getName());

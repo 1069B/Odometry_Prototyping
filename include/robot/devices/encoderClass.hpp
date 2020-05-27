@@ -9,7 +9,7 @@ private:
   std::string m_name = "Encoder";
   Robot& m_robot;
   short m_port;// 1,3,5,7
-  Timer m_timer;
+  SubTimer m_timer;
 
   int m_rotation = 0;
   double m_displacement = 0;
@@ -20,10 +20,10 @@ private:
   double m_calculatedDisplacement = 0;
 
   double m_velocity = 0;
+  double m_timerChange = 0;
 
   int m_direction = 0;
   bool m_reversed = false;
-  double m_wheelCircumference = 22.15;
 
   std::vector<double> m_avgVelocity;
 

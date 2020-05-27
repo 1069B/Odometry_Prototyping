@@ -48,7 +48,9 @@ public:
   AutonomousSide m_autoSide;
   int m_programNumber;
 
-  Timer m_autoTimer;
+  SubTimer m_baseTimer;
+  SubTimer m_armTimer;
+  SubTimer m_intakeTimer;
   bool m_programStart = false;
   bool m_programRunning = false;
 

@@ -17,6 +17,7 @@ private:
   GraphicalInterface m_gui;
 
   Timer m_timer;
+
   ExternalFile m_config;
   TaskScheduler m_taskScheduler;
 
@@ -31,6 +32,8 @@ private:
 
   int m_programNumber = AUTO_DEFAULT;
 public:
+  SubTimer m_autonTimer;
+
   Controller m_mainController;
   Controller m_partnerController;
 
@@ -49,6 +52,8 @@ public:
   TaskScheduler& getTaskScheduler();
 
   RobotMode getRobotMode();
+
+  int resetOrientation();
 
   int autoRed();
   int autoBlue();

@@ -1,6 +1,7 @@
 #include "tasks.hpp"
 #include "robotClass.hpp"
 #include "robot/graphical/components/alertClass.hpp"
+#include "robot/devices/motorClass.hpp"
 
 Robot robot;
 
@@ -25,9 +26,15 @@ void competition_initialize() {
 }
 
 void autonomous() {
-  robot.autonmous();
+  robot.m_autonTimer.resetTime();
+  robot.resetOrientation();
+  Motor::findMotor("FrontLeftMotor")->resetRotation();
+  Motor::findMotor("FrontRightMotor")->resetRotation();
+  Motor::findMotor("BackLeftMotor")->resetRotation();
+  Motor::findMotor("BackRightMotor")->resetRotation();
   while(true){
     robot.task();
+    robot.autonmous();
     pros::delay(2);
   }
 }

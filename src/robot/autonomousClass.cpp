@@ -32,7 +32,8 @@ AutoIntakeEvent::AutoIntakeEvent(Intake &p_intake, const int p_delay, const int 
   m_duration = true;
 }
 
-AutoProgram::AutoProgram(const std::string p_name, const AutonomousSide p_autoSide, const int p_programNumber){
+AutoProgram::AutoProgram(const std::string p_name, const AutonomousSide p_autoSide, const int p_programNumber):
+m_baseTimer("Auton Base", false), m_armTimer("Auton Arm", false), m_intakeTimer("Auton Intake", false){
   m_name = p_name;
   m_autoSide = p_autoSide;
   m_programNumber = p_programNumber;
@@ -217,27 +218,30 @@ int Autonomous::autoProgramDaemon(){
       m_selectedProgram->m_armIteration = 0;
       m_selectedProgram->m_intakeIteration = 0;
 
-      m_selectedProgram->m_autoTimer.resetTime();
+
+      m_selectedProgram->m_baseTimer.resetTime();
+      m_selectedProgram->m_armTimer.resetTime();
+      m_selectedProgram->m_intakeTimer.resetTime();
     }
 
-    if(m_selectedProgram->m_autoTimer.preformAction(0)){
-        m_selectedProgram->m_autoTimer.addActionDelay(0);
+    if(m_selectedProgram->m_baseTimer.preformAction()){
+        m_selectedProgram->m_baseTimer.addActionDelay(500);// Check Delay Time
         if(m_selectedProgram->m_baseEvents.size() > m_selectedProgram->m_baseIteration){
           //m_robot.basse set parameters
           m_selectedProgram->m_baseIteration++;
         }
     }
 
-    if(m_selectedProgram->m_autoTimer.preformAction(1)){
-        m_selectedProgram->m_autoTimer.addActionDelay(1);
+    if(m_selectedProgram->m_armTimer.preformAction()){
+        m_selectedProgram->m_armTimer.addActionDelay(500);
         if(m_selectedProgram->m_armEvents.size() > m_selectedProgram->m_armIteration){
           //m_robot.arm set parameters
           m_selectedProgram->m_armIteration++;
         }
     }
 
-    if(m_selectedProgram->m_autoTimer.preformAction(2)){
-        m_selectedProgram->m_autoTimer.addActionDelay(2);
+    if(m_selectedProgram->m_intakeTimer.preformAction()){
+        m_selectedProgram->m_intakeTimer.addActionDelay(500);
         if(m_selectedProgram->m_intakeEvents.size() > m_selectedProgram->m_intakeIteration){
           //m_robot.basse set parameters
           m_selectedProgram->m_intakeIteration++;

@@ -4,6 +4,10 @@
 #ifndef ENUMS_H
 #define ENUMS_H
 
+const int g_encoderVelocityMaximum = 0;
+const double g_trackingWheelDistance = 26.355;//Unit: cm
+const double g_trackingWheelCircumfrence = 22.15;//Unit: cm
+
 enum RobotMode{
     ROBOT_AUTO = 0,
     ROBOT_OPERATER = 1,
@@ -77,6 +81,7 @@ class Motor;
 struct SubTask;
 class TaskScheduler;
 class Timer;
+class SubTimer;
 
 struct PassInfo;
 class Alert;

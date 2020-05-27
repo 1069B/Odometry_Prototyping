@@ -33,6 +33,10 @@ public:
   int task();
 
   int defineGUI(const std::string p_returnScreen);
+
+  int autonomous();
+
+  int setBrakeMode(pros::motor_brake_mode_e_t p_brakeMode);
 };
 
 #endif // HOLONOMICCLASS_H

@@ -3,7 +3,7 @@
 #include "robot/graphical/components/alertClass.hpp"
 #include "robotClass.hpp"
 
-Intake::Intake(Robot& p_robot, const std::string p_name): m_robot(p_robot){
+Intake::Intake(Robot& p_robot, const std::string p_name): m_robot(p_robot), m_timer("Intake: "+ m_name, false){
   m_name = p_name;
 }
 

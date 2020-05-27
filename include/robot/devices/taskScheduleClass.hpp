@@ -11,7 +11,7 @@ private:
     std::function<int()> m_function;
     int m_callPeriod = 50;
     int m_callFrequency = 0;
-    Timer m_timer;
+    SubTimer m_timer;
     TaskType m_callType;
     friend class TaskScheduler;
 public:

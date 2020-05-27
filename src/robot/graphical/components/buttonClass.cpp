@@ -14,7 +14,7 @@ m_screen(p_screen),m_updateScreenVarible(p_screen.getNextScreenID()){
   m_text = p_info.text;
 }
 
-Timer Button::s_timer(false);
+SubTimer Button::s_timer("Button Action", false);
 
 void Button::defineAction(const PassInfo& p_info){
   switch(p_info.mode){

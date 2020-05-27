@@ -1,6 +1,7 @@
 #include "robot/devices/taskScheduleClass.hpp"
 
-SubTask::SubTask(std::string p_name, std::function<int()> p_function, int p_callPeriod, TaskType p_callType){
+SubTask::SubTask(std::string p_name, std::function<int()> p_function, int p_callPeriod, TaskType p_callType):
+m_timer(("SubTask: " + p_name), false){
     m_name = p_name;
     m_function = p_function;
     m_callPeriod = p_callPeriod;

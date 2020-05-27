@@ -34,11 +34,9 @@ private:
   double m_currentTime =0;
   double m_previousTime=0;
 
-	Timer m_timer;
-
+	SubTimer m_orientationTimer;
 
   std::string m_turnType;
-	double m_trakingDistanceTotal = 26.355;//Units in cm
 
   double orientationConverter(const double p_angle);
 
@@ -48,8 +46,8 @@ private:
   int calculatePosition();
   int calculateOrientation();
 
-  // ExternalFile m_translationDebug;
-  //ExternalFile m_OrientationDebug;
+  //ExternalFile m_translationDebug;
+  ExternalFile m_OrientationDebug;
 
 public:
   Odometry(Robot& p_robot, const std::string p_leftEncoder, const std::string p_rightEncoder, const std::string p_centerEncoder);

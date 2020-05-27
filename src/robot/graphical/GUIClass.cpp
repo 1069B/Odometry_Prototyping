@@ -2,7 +2,7 @@
 #include "robot/graphical/screenClass.hpp"
 #include "robot/graphical/components/passInfo.hpp"
 
-GraphicalInterface::GraphicalInterface(const std::string p_startingScreen):m_timer(false), m_GUIStorage("GUI_Storage.txt"){
+GraphicalInterface::GraphicalInterface(const std::string p_startingScreen):m_GUITimer("GUI", false), m_GUIStorage("GUI_Storage.txt"){
   if(m_GUIStorage.fileExist() && m_GUIStorage.readBool("Open_Previous")){
     m_nextScreenID = m_GUIStorage.readString("Previous_Screen");
   }
@@ -245,15 +245,15 @@ void GraphicalInterface::updateScreen(){
 }
 
 void GraphicalInterface::task(){
-  if(m_timer.preformAction() && m_nextScreenID != m_currentScreenID && pros::millis() > 10){// Makes the change of screen
+  if(m_GUITimer.preformAction() && m_nextScreenID != m_currentScreenID && pros::millis() > 10){// Makes the change of screen
     updateScreen();
-    m_timer.addActionDelay(400);
+    m_GUITimer.addActionDelay(400);
   }
 
   m_currentScreen->detect();
 
-  if(m_timer.preformAction() && m_nextScreenID != m_currentScreenID){// Delay for Visual Button
-    m_timer.addActionDelay(100);
+  if(m_GUITimer.preformAction() && m_nextScreenID != m_currentScreenID){// Delay for Visual Button
+    m_GUITimer.addActionDelay(100);
   }
 
   if(m_nextScreen->isRelation() && m_nextScreen->getInverse() && !m_nextScreen->getRelatedFunc()()){

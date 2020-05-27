@@ -13,7 +13,7 @@ private:
   std::string m_text;
   std::string& m_updateScreenVarible;
 
-  static Timer s_timer;
+  static SubTimer s_timer;
 
   /*Required Variles for Change Screen Action*/
   bool m_changeScreen = false;

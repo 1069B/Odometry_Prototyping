@@ -14,7 +14,7 @@ private:
   std::string m_nextScreenID = "C";
   Screen* m_nextScreen;// = new Screen("Blank", noVersion, defaultBackground, nextScreenID);
   Screen* m_currentScreen;// = new Screen("Blank", noVersion, defaultBackground, nextScreenID);
-  Timer m_timer;
+  SubTimer m_GUITimer;
   ExternalFile m_GUIStorage;
   void updateScreen();
 

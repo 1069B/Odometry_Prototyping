@@ -2,12 +2,14 @@
 #include "robot/devices/motorClass.hpp"
 #include "robot/graphical/components/alertClass.hpp"
 #include "robot/subsystems/baseComponents/holonomicClass.hpp"
+#include "robot/subsystems/odometryClass.hpp"
 
 Robot::Robot():
   m_gui("Odometry"),
   m_mainController(pros::E_CONTROLLER_MASTER),
   m_partnerController(pros::E_CONTROLLER_PARTNER),
-  m_timer(),
+  m_timer(*this),
+  m_autonTimer("Auton Timer", false),
   m_config("Robot_Config.txt"),
   m_base(*this, 200),
   m_taskScheduler(*this, "MainTaskScheduler")
@@ -81,4 +83,9 @@ int Robot::disabled(){
 
 RobotMode Robot::getRobotMode(){
   return m_robotMode;
+}
+
+int Robot::resetOrientation(){
+  m_base.m_odometry.setOrientation(0);
+  return 0;
 }

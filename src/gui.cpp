@@ -9,6 +9,7 @@ int Robot::defineGUI(){
   m_mainController.defineGUI(m_gui, "Home");
   m_partnerController.defineGUI(m_gui, "Home");
   m_base.defineGUI("Home");
+  m_timer.defineGUI("Subsystems");
 
   m_gui.addScreen("Home");
   m_gui.addButton("Home", "Subsystems", 50, 100, 150, 30);
@@ -21,6 +22,8 @@ int Robot::defineGUI(){
   m_gui.addScreen("Subsystems");
   m_gui.addButton("Subsystems", "Odometry", 20, 40, 150, 30);
   m_gui.addButtonScreenChange("Subsystems", "Odometry", "Odometry");
+  m_gui.addButton("Subsystems", "Timers", 20, 80, 150, 30);
+  m_gui.addButtonScreenChange("Subsystems", "Timers", "Timers Page 1");
   m_gui.addButton("Subsystems", "Base", 180, 80, 150, 30);
   m_gui.addButtonScreenChange("Subsystems", "Base", "Holonomic");
 

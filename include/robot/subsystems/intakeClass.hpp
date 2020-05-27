@@ -43,7 +43,7 @@ private:
   ManipulatorMode m_mode = MANIPULATOR_DISABLED;
   std::string m_modeString = "Disabled";
 
-  Timer m_timer;
+  SubTimer m_timer;
 
 public:
   Intake(Robot& p_robot, const std::string p_name);

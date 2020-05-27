@@ -3,26 +3,44 @@
 #ifndef TIMERCLASS_H
 #define TIMERCLASS_H
 
-  class Timer{
+class SubTimer{
+private:
+  std::string m_name;
+
+  int m_startTime;
+  int m_currentTime;
+  int m_previousLapTime;
+  int m_nextFlag;
+
+public:
+  SubTimer(const std::string p_name, const bool p_mode = false);
+
+  int resetTime();
+
+  int getTime();
+
+  int lapTime();
+
+  bool preformAction();
+
+  int addActionDelay(const int p_delay);
+
+  int subGUI(GraphicalInterface& p_gui, std::string p_returnScreen);
+
+  std::string getName();
+};
+
+class Timer{
   private:
-    int m_startTime;
-    int m_currentTime;
-    std::vector<int> m_previousLapTime;
-    std::vector<int> m_nextFlag;
+    Robot &m_robot;
+    static std::vector<SubTimer*> m_timeArray;
 
+    static int addSubTimer(SubTimer& p_subTimer);
+
+    friend class SubTimer;
   public:
-    Timer(const bool p_mode = false);
+    Timer(Robot &p_robot);
 
-    int resetTime();
-
-    int getTime();
-
-    int lapTime(const int p_lapVersion = 0);
-
-    bool preformAction(const int p_actionVersion = 0);
-
-    int addActionDelay(const int p_delay, const int p_actionVersion = 0);
-
-    int defineGUI(GraphicalInterface& p_gui, std::string p_returnScreen);
+    int defineGUI(std::string p_returnScreen);
   };
 #endif // TIMERCLASS_H
